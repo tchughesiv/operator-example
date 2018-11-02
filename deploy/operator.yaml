@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: operator-example
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: operator-example
+  template:
+    metadata:
+      labels:
+        name: operator-example
+    spec:
+      serviceAccountName: operator-example
+      containers:
+        - name: operator-example
+          # Replace this with the built image name
+          image: REPLACE_IMAGE
+          ports:
+          - containerPort: 60000
+            name: metrics
+          command:
+          - operator-example
+          imagePullPolicy: Always
+          env:
+            - name: WATCH_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: OPERATOR_NAME
+              value: "operator-example"
